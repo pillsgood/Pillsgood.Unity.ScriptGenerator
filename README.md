@@ -7,7 +7,7 @@ add to ```Packages/manijest.json```
 }
 ```
 
-or install using git url (https://github.com/pillsgood/Pillsgood.Unity.ScriptGenerator.git) from package manager.
+or install from git url (https://github.com/pillsgood/Pillsgood.Unity.ScriptGenerator.git) using package manager.
 
 ## Supported
 * AnimatorController
