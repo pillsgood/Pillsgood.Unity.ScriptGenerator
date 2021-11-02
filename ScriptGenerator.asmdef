@@ -1,0 +1,17 @@
+{
+    "name": "ScriptGenerator",
+    "rootNamespace": "",
+    "references": [
+        "GUID:027ecc875a5d270419bd0247fb5011db",
+        "GUID:93333da93cddb444d869997df6c2ef59"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
