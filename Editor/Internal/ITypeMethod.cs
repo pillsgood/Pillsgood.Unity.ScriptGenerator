@@ -4,7 +4,7 @@ namespace ScriptGenerator.Editor.Internal
 {
     internal interface ITypeMethod
     {
-        ITypeMethod Returns(CodeTypeReference type);
+        ITypeMethod Return(CodeTypeReference type);
         ITypeMethod Void();
 
         ITypeMethod AddParameter(CodeTypeReference type, string name,

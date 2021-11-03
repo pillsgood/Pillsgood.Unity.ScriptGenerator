@@ -29,12 +29,12 @@ namespace ScriptGenerator.Editor.Internal
 
         public static ITypeMethod Return(this ITypeMethod source, Type type)
         {
-            return source.Returns(new CodeTypeReference(type));
+            return source.Return(new CodeTypeReference(type));
         }
 
         public static ITypeMethod Return(this ITypeMethod source, string type)
         {
-            return source.Returns(new CodeTypeReference(type));
+            return source.Return(new CodeTypeReference(type));
         }
     }
 }

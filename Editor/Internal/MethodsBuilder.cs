@@ -39,7 +39,7 @@ namespace ScriptGenerator.Editor.Internal
                 _method = method;
             }
 
-            public ITypeMethod Returns(CodeTypeReference type)
+            public ITypeMethod Return(CodeTypeReference type)
             {
                 _method.ReturnType = type;
                 return this;

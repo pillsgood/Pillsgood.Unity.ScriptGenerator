@@ -57,30 +57,27 @@ namespace ScriptGenerator.Editor
 
         private void BuildTargetBaseClass(ICodeTypeDeclaration builder)
         {
-            var animatorArg = new CodeParameterDeclarationExpression(typeof(Animator), "animator");
-
             builder.Name($"{TypeName}_Bindings")
                 .IsClass()
                 .TypeAttributes(TypeAttributes.Public | TypeAttributes.Abstract)
                 .Members()
                 .AddNestedType(BuildAnimationLayers, out var animLayersType)
                 .AddNestedType(BuildAnimationParameters)
-                .Constructor(constructor =>
+                .Constructor(out CodeArgumentReferenceExpression animatorParamRef, constructor =>
                 {
                     constructor.Abstract().Protected()
-                        .AddParameter(animatorArg);
+                        .AddParameter(typeof(Animator), "animator", out animatorParamRef);
                 })
                 .Fields(out CodeFieldReferenceExpression animatorRef, fields =>
                 {
-                    var animatorArgRef = new CodeArgumentReferenceExpression(animatorArg.Name);
                     fields.PrivateReadonly(typeof(Animator), "_animator", out animatorRef)
                         .Assign()
-                        .InConstructor(animatorArgRef)
+                        .InConstructor(animatorParamRef)
                         .EncapsulateGetOnly("Animator", MemberAttributes.Public);
 
                     fields.PrivateReadonly(animLayersType, "_layers")
                         .Assign()
-                        .InConstructor(new CodeObjectCreateExpression(animLayersType, animatorArgRef))
+                        .InConstructor(new CodeObjectCreateExpression(animLayersType, animatorParamRef))
                         .EncapsulateGetOnly("Layers", MemberAttributes.Public);
 
                     foreach (var parameter in SourceObject.parameters.Where(param =>
