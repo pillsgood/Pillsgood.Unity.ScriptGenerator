@@ -14,6 +14,9 @@ or install from git url (https://github.com/pillsgood/Pillsgood.Unity.ScriptGene
   * Parameters (float/bool/int)
   * Parameters: triggers
   * Layers
+* Sprite Library Asset
+  * get sprite from index in statically typed categories
+  * get sprite from enum for category labels
   
 ## Requirement
 * Unity 2021.2 (Todo: support older versions)
