@@ -84,7 +84,7 @@ namespace ScriptGenerator.Editor
 
                     foreach (var parameter in SourceObject.parameters.Where(param =>
                         param.type is AnimatorControllerParameterType.Trigger))
-                        fields.PrivateReadonly(typeof(AnimationTrigger), $"_{GetFieldName(parameter.name)}")
+                        fields.PrivateReadonly(typeof(AnimationTrigger), $"{GetPrivateFieldName(parameter.name)}")
                             .Assign()
                             .InConstructor(new CodeObjectCreateExpression(typeof(AnimationTrigger),
                                 animatorRef, _paramRefs[parameter.name]))

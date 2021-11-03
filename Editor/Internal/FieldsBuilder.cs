@@ -25,6 +25,42 @@ namespace ScriptGenerator.Editor.Internal
             return new FieldBuilder(this, field, out fieldRef);
         }
 
+        public ITypeField Private(CodeTypeReference type, string name,
+            out CodeFieldReferenceExpression fieldReference)
+        {
+            var field = new CodeMemberField(type, name)
+            {
+                Attributes = MemberAttributes.Private
+            };
+
+            _fields.Add(field);
+            return new FieldBuilder(this, field, out fieldReference);
+        }
+
+        public ITypeField Protected(CodeTypeReference type, string name,
+            out CodeFieldReferenceExpression fieldReference)
+        {
+            var field = new CodeMemberField(type, name)
+            {
+                Attributes = MemberAttributes.Family
+            };
+
+            _fields.Add(field);
+            return new FieldBuilder(this, field, out fieldReference);
+        }
+
+        public ITypeField Public(CodeTypeReference type, string name,
+            out CodeFieldReferenceExpression fieldReference)
+        {
+            var field = new CodeMemberField(type, name)
+            {
+                Attributes = MemberAttributes.Public
+            };
+
+            _fields.Add(field);
+            return new FieldBuilder(this, field, out fieldReference);
+        }
+
 
         public ITypeField PublicConst(CodeTypeReference type, string name,
             out CodeFieldReferenceExpression fieldReference)

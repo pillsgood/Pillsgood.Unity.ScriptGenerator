@@ -7,6 +7,16 @@ namespace ScriptGenerator.Editor.Internal
         ITypeField PrivateReadOnly(CodeTypeReference type, string name,
             out CodeFieldReferenceExpression fieldReference);
 
+        ITypeField Private(CodeTypeReference type, string name,
+            out CodeFieldReferenceExpression fieldReference);
+
+        ITypeField Protected(CodeTypeReference type, string name,
+            out CodeFieldReferenceExpression fieldReference);
+
+        ITypeField Public(CodeTypeReference type, string name,
+            out CodeFieldReferenceExpression fieldReference);
+
+
         ITypeField PublicConst(CodeTypeReference type, string name,
             out CodeFieldReferenceExpression fieldReference);
     }

@@ -25,6 +25,32 @@ namespace ScriptGenerator.Editor.Internal
             return new PropertyBuilder(this, property, out propertyReference);
         }
 
+        public ITypeProperty Protected(CodeTypeReference type, string name,
+            out CodePropertyReferenceExpression propertyReference)
+        {
+            var property = new CodeMemberProperty
+            {
+                Type = type,
+                Name = name,
+                Attributes = MemberAttributes.Family | MemberAttributes.Final
+            };
+            _properties.Add(property);
+            return new PropertyBuilder(this, property, out propertyReference);
+        }
+
+        public ITypeProperty Private(CodeTypeReference type, string name,
+            out CodePropertyReferenceExpression propertyReference)
+        {
+            var property = new CodeMemberProperty
+            {
+                Type = type,
+                Name = name,
+                Attributes = MemberAttributes.Private | MemberAttributes.Final
+            };
+            _properties.Add(property);
+            return new PropertyBuilder(this, property, out propertyReference);
+        }
+
         public CodeTypeMemberCollection Result()
         {
             return _properties;
