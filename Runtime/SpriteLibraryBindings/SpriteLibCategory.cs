@@ -8,11 +8,9 @@ namespace ScriptGenerator.Runtime.SpriteLibraryBindings
 {
     public abstract class SpriteLibCategory : IEnumerable<Sprite>
     {
+        private readonly string[] _labels;
         public readonly string categoryName;
         public readonly SpriteLibraryAsset libraryAsset;
-        private readonly string[] _labels;
-
-        public int Count => _labels.Length;
 
         public SpriteLibCategory(string categoryName, SpriteLibraryAsset libraryAsset)
         {
@@ -21,14 +19,13 @@ namespace ScriptGenerator.Runtime.SpriteLibraryBindings
             _labels = this.libraryAsset.GetCategoryLabelNames(this.categoryName).ToArray();
         }
 
+        public int Count => _labels.Length;
+
         public Sprite this[int index] => libraryAsset.GetSprite(categoryName, _labels[index]);
 
         public IEnumerator<Sprite> GetEnumerator()
         {
-            for (var i = 0; i < Count; i++)
-            {
-                yield return this[i];
-            }
+            for (var i = 0; i < Count; i++) yield return this[i];
         }
 
         IEnumerator IEnumerable.GetEnumerator()

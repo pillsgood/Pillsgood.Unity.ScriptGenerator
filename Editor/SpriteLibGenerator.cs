@@ -14,8 +14,8 @@ namespace ScriptGenerator.Editor
     [ScriptedImporter(1, Extension)]
     public class SpriteLibGenerator : ScriptGeneratorBase<SpriteLibraryAsset>
     {
-        private Dictionary<string, CodeTypeReference> _categoryTypes;
         private const string Extension = BaseExtension + "sprite_lib";
+        private Dictionary<string, CodeTypeReference> _categoryTypes;
 
         [MenuItem("Assets/Create/Generators/Sprite Library Bindings")]
         public static void CreateAsset()
@@ -42,9 +42,7 @@ namespace ScriptGenerator.Editor
             _categoryTypes = new Dictionary<string, CodeTypeReference>();
 
             foreach (var categoryName in SourceObject.GetCategoryNames())
-            {
                 members.AddNestedType(declaration => BuildCategoryType(declaration, categoryName));
-            }
 
             members
                 .AddNestedType(BuildSpriteLibCategories, out var categoriesTypeReference)
@@ -66,26 +64,23 @@ namespace ScriptGenerator.Editor
 
         private void BuildCategoryType(ICodeTypeDeclaration builder, string categoryName)
         {
-            CodeTypeDeclaration enumTypeDeclaration = null;
             var categoryDeclaration = builder.Name($"{GetPropertyName(categoryName)}_Category")
                 .IsClass()
                 .Inherits(typeof(SpriteLibCategory))
                 .Members()
-                .AddNestedType(enumDeclaration =>
+                .AddNestedType(declaration =>
                 {
-                    enumTypeDeclaration = enumDeclaration.Name("Label")
+                    declaration.Name("Label")
                         .TypeAttributes(TypeAttributes.Public)
                         .IsEnum()
                         .Members()
                         .EnumFields(fields =>
                         {
                             foreach (var labelName in SourceObject.GetCategoryLabelNames(categoryName))
-                            {
                                 fields.Add(GetEnumFieldName(labelName));
-                            }
                         })
                         .Result();
-                })
+                }, out var enumTypeRef)
                 .Constructor(constructor =>
                 {
                     constructor.Public()
@@ -98,7 +93,7 @@ namespace ScriptGenerator.Editor
                 {
                     methods.Public("Get")
                         .Return(typeof(Sprite))
-                        .AddParameter(enumTypeDeclaration.Name, "label", out var paramRef)
+                        .AddParameter(enumTypeRef, "label", out var paramRef)
                         .Statement(statements =>
                         {
                             var index = new CodeCastExpression(typeof(int), paramRef);

@@ -77,7 +77,7 @@ namespace ScriptGenerator.Editor
                 }
             }
         }
-        
+
         protected static string GetPropertyName(string name)
         {
             var parts = name
@@ -108,13 +108,8 @@ namespace ScriptGenerator.Editor
             if (char.IsDigit(name[0]))
             {
                 if (name.Length == 1)
-                {
                     return $"entry_{name}";
-                }
-                else
-                {
-                    return name[1..].Trim('_') + $"_{name[0]}";
-                }
+                return name[1..].Trim('_') + $"_{name[0]}";
             }
 
             return name;

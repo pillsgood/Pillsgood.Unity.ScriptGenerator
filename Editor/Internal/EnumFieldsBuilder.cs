@@ -12,16 +12,16 @@ namespace ScriptGenerator.Editor.Internal
             _codeTypeBuilder = codeTypeBuilder;
         }
 
-        public CodeTypeMemberCollection Result()
-        {
-            return _fields;
-        }
-
         public IEnumFields Add(string name)
         {
             var field = new CodeMemberField(_codeTypeBuilder.typeDeclaration.Name, name);
             _fields.Add(field);
             return this;
+        }
+
+        public CodeTypeMemberCollection Result()
+        {
+            return _fields;
         }
     }
 }

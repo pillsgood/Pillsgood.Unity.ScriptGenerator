@@ -12,20 +12,20 @@ namespace ScriptGenerator.Editor.Internal
             _codeTypeBuilder = codeTypeBuilder;
         }
 
-        public CodeTypeMemberCollection Result()
-        {
-            return _methods;
-        }
-
         public ITypeMethod Public(string name)
         {
-            var method = new CodeMemberMethod()
+            var method = new CodeMemberMethod
             {
                 Name = name,
                 Attributes = MemberAttributes.Public | MemberAttributes.Final
             };
             _methods.Add(method);
             return new TypeMethod(_codeTypeBuilder, method);
+        }
+
+        public CodeTypeMemberCollection Result()
+        {
+            return _methods;
         }
 
         private class TypeMethod : ITypeMethod
