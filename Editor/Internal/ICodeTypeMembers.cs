@@ -10,9 +10,12 @@ namespace ScriptGenerator.Editor.Internal
         ICodeTypeMembers AddNestedType(Action<ICodeTypeDeclaration> build);
         ICodeTypeMembers AddNestedType(Action<ICodeTypeDeclaration> build, out CodeTypeReference typeDeclaration);
         ICodeTypeMembers Constructor(Action<ITypeConstructor> build);
+        ICodeTypeMembers Constructor<T>(out T arg, Action<ITypeConstructor> build);
         ICodeTypeMembers Fields(Action<ITypeFields> build);
         ICodeTypeMembers Fields<T>(out T arg, Action<ITypeFields> build);
         ICodeTypeMembers Fields<T1, T2>(out T1 arg1, out T2 arg2, Action<ITypeFields> build);
-        ICodeTypeMembers Properties(Action<ITypeProperties> action);
+        ICodeTypeMembers Properties(Action<ITypeProperties> build);
+        ICodeTypeMembers EnumFields(Action<IEnumFields> build);
+        ICodeTypeMembers Methods(Action<ITypeMethods> build);
     }
 }

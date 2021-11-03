@@ -28,9 +28,11 @@ namespace ScriptGenerator.Editor.Internal
             return this;
         }
 
-        public ITypeConstructor AddParameter(CodeParameterDeclarationExpression expression)
+        public ITypeConstructor AddParameter(CodeParameterDeclarationExpression expression,
+            out CodeArgumentReferenceExpression argumentReference)
         {
             _codeConstructor.Parameters.Add(expression);
+            argumentReference = new CodeArgumentReferenceExpression(expression.Name);
             return this;
         }
 

@@ -7,52 +7,58 @@ namespace ScriptGenerator.Editor.Internal
 {
     internal class CodeTypeBuilder : ICodeTypeDeclaration, ICodeTypeMembers
     {
-        private readonly CodeTypeDeclaration _codeTypeDeclaration;
+        internal readonly CodeTypeDeclaration typeDeclaration;
         [CanBeNull] private CodeTypeReference _baseType;
 
         [CanBeNull] internal CodeConstructor codeConstructor;
 
         public CodeTypeBuilder()
         {
-            _codeTypeDeclaration = new CodeTypeDeclaration();
+            typeDeclaration = new CodeTypeDeclaration();
         }
 
         public ICodeTypeDeclaration Name(string name)
         {
-            _codeTypeDeclaration.Name = name;
+            typeDeclaration.Name = name;
             return this;
         }
 
         public ICodeTypeDeclaration IsClass()
         {
-            _codeTypeDeclaration.IsClass = true;
+            typeDeclaration.IsClass = true;
             return this;
         }
 
         public ICodeTypeDeclaration TypeAttributes(TypeAttributes typeAttributes)
         {
-            _codeTypeDeclaration.TypeAttributes = typeAttributes;
+            typeDeclaration.TypeAttributes = typeAttributes;
             return this;
         }
 
         public ICodeTypeDeclaration IsPartial()
         {
-            _codeTypeDeclaration.IsPartial = true;
+            typeDeclaration.IsPartial = true;
             return this;
         }
 
         public ICodeTypeDeclaration Inherits(CodeTypeReference type)
         {
-            if (_baseType != null) _codeTypeDeclaration.BaseTypes.Remove(_baseType);
+            if (_baseType != null) typeDeclaration.BaseTypes.Remove(_baseType);
             _baseType = type;
-            _codeTypeDeclaration.BaseTypes.Add(type);
+            typeDeclaration.BaseTypes.Add(type);
             return this;
         }
 
         public ICodeTypeDeclaration Implements(CodeTypeReference type)
         {
-            if (!_codeTypeDeclaration.BaseTypes.Contains(type)) _codeTypeDeclaration.BaseTypes.Add(type);
+            if (!typeDeclaration.BaseTypes.Contains(type)) typeDeclaration.BaseTypes.Add(type);
 
+            return this;
+        }
+
+        public ICodeTypeDeclaration IsEnum()
+        {
+            typeDeclaration.IsEnum = true;
             return this;
         }
 
@@ -63,7 +69,7 @@ namespace ScriptGenerator.Editor.Internal
 
         public CodeTypeDeclaration Result()
         {
-            return _codeTypeDeclaration;
+            return typeDeclaration;
         }
 
         public ICodeTypeMembers AddNestedType(Action<ICodeTypeDeclaration> build)
@@ -76,9 +82,9 @@ namespace ScriptGenerator.Editor.Internal
         {
             var builder = new CodeTypeBuilder();
             build?.Invoke(builder);
-            var typeDeclaration = builder.Result();
-            _codeTypeDeclaration.Members.Add(typeDeclaration);
-            typeReference = new CodeTypeReference(typeDeclaration.Name);
+            var nestedTypeDeclaration = builder.Result();
+            typeDeclaration.Members.Add(nestedTypeDeclaration);
+            typeReference = new CodeTypeReference(nestedTypeDeclaration.Name);
             return this;
         }
 
@@ -87,15 +93,21 @@ namespace ScriptGenerator.Editor.Internal
             var builder = new ConstructorBuilder();
             build?.Invoke(builder);
             codeConstructor = builder.Result();
-            _codeTypeDeclaration.Members.Add(codeConstructor!);
+            typeDeclaration.Members.Add(codeConstructor!);
             return this;
+        }
+
+        public ICodeTypeMembers Constructor<T>(out T arg, Action<ITypeConstructor> build)
+        {
+            arg = default;
+            return Constructor(build);
         }
 
         public ICodeTypeMembers Fields(Action<ITypeFields> build)
         {
             var builder = new FieldsBuilder(this);
             build?.Invoke(builder);
-            _codeTypeDeclaration.Members.AddRange(builder.Result());
+            typeDeclaration.Members.AddRange(builder.Result());
             return this;
         }
 
@@ -116,7 +128,23 @@ namespace ScriptGenerator.Editor.Internal
         {
             var builder = new PropertiesBuilder(this);
             build?.Invoke(builder);
-            _codeTypeDeclaration.Members.AddRange(builder.Result());
+            typeDeclaration.Members.AddRange(builder.Result());
+            return this;
+        }
+
+        public ICodeTypeMembers EnumFields(Action<IEnumFields> build)
+        {
+            var builder = new EnumFieldsBuilder(this);
+            build?.Invoke(builder);
+            typeDeclaration.Members.AddRange(builder.Result());
+            return this;
+        }
+
+        public ICodeTypeMembers Methods(Action<ITypeMethods> build)
+        {
+            var builder = new MethodsBuilder(this);
+            build?.Invoke(builder);
+            typeDeclaration.Members.AddRange(builder.Result());
             return this;
         }
     }

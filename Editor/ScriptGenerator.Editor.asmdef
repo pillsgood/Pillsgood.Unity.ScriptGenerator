@@ -2,7 +2,8 @@
     "name": "ScriptGenerator.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:027ecc875a5d270419bd0247fb5011db"
+        "GUID:027ecc875a5d270419bd0247fb5011db",
+        "GUID:41524c21c95e5fe4dbc5b48bd21995a4"
     ],
     "includePlatforms": [
         "Editor"

@@ -17,6 +17,7 @@ namespace ScriptGenerator.Editor
     [ScriptedImporter(1, Extension)]
     public class AnimatorBindingGenerator : ScriptGeneratorBase<AnimatorController>
     {
+        private const string Extension = BaseExtension + "animator_controller";
         private Dictionary<string, CodeFieldReferenceExpression> _paramRefs;
 
         [MenuItem("Assets/Create/Generators/Animator Bindings")]
@@ -192,30 +193,6 @@ namespace ScriptGenerator.Editor
                             .EncapsulateGetOnly(propertyName, MemberAttributes.Public | MemberAttributes.Final);
                     }
                 });
-        }
-
-        private static string GetPropertyName(string name)
-        {
-            var parts = name
-                .Split(new[] { ' ', '_' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(s => s.Length > 1
-                    ? char.ToUpperInvariant(s[0]) + s[1..]
-                    : s.ToUpperInvariant());
-
-            return string.Join("", parts);
-        }
-
-        private static string GetFieldName(string name)
-        {
-            var s = GetPropertyName(name);
-            return s.Length > 1
-                ? char.ToLowerInvariant(s[0]) + s[1..]
-                : s.ToLowerInvariant();
-        }
-
-        private static string GetPrivateFieldName(string name)
-        {
-            return "_" + GetFieldName(name);
         }
     }
 }

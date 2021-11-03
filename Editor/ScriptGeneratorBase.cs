@@ -23,7 +23,7 @@ namespace ScriptGenerator.Editor
 
     public abstract class ScriptGeneratorBase<TSource> : ScriptedImporter where TSource : Object
     {
-        protected const string Extension = "script_generator";
+        protected const string BaseExtension = "script_generator";
         private static readonly Regex NamespacePattern = new(@"""rootNamespace"": ""(.*)""");
 
         [SerializeField] private bool autoNamespace;
@@ -76,6 +76,48 @@ namespace ScriptGenerator.Editor
                     AssetDatabase.Refresh();
                 }
             }
+        }
+        
+        protected static string GetPropertyName(string name)
+        {
+            var parts = name
+                .Split(new[] { ' ', '_' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Length > 1
+                    ? char.ToUpperInvariant(s[0]) + s[1..]
+                    : s.ToUpperInvariant());
+
+            return string.Join("", parts);
+        }
+
+        protected static string GetFieldName(string name)
+        {
+            var s = GetPropertyName(name);
+            return s.Length > 1
+                ? char.ToLowerInvariant(s[0]) + s[1..]
+                : s.ToLowerInvariant();
+        }
+
+        protected static string GetPrivateFieldName(string name)
+        {
+            return "_" + GetFieldName(name);
+        }
+
+        protected static string GetEnumFieldName(string name)
+        {
+            name = GetPropertyName(name);
+            if (char.IsDigit(name[0]))
+            {
+                if (name.Length == 1)
+                {
+                    return $"entry_{name}";
+                }
+                else
+                {
+                    return name[1..].Trim('_') + $"_{name[0]}";
+                }
+            }
+
+            return name;
         }
 
         protected abstract bool GenerateCode();

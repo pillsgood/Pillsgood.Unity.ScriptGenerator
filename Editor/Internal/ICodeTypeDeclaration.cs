@@ -11,6 +11,7 @@ namespace ScriptGenerator.Editor.Internal
         ICodeTypeDeclaration IsPartial();
         ICodeTypeDeclaration Inherits(CodeTypeReference type);
         ICodeTypeDeclaration Implements(CodeTypeReference type);
+        ICodeTypeDeclaration IsEnum();
         ICodeTypeMembers Members();
     }
 }
