@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿#if U2D_ANIMATION
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -34,3 +35,4 @@ namespace ScriptGenerator.Runtime.SpriteLibraryBindings
         }
     }
 }
+#endif

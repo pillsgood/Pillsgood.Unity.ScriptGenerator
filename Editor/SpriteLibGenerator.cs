@@ -1,4 +1,5 @@
-﻿using System.CodeDom;
+﻿#if U2D_ANIMATION
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Reflection;
 using ScriptGenerator.Editor.Internal;
@@ -138,3 +139,4 @@ namespace ScriptGenerator.Editor
         }
     }
 }
+#endif

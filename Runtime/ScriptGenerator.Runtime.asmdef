@@ -1,6 +1,24 @@
 {
-  "name": "ScriptGenerator.Runtime",
-  "references": [
-    "GUID:41524c21c95e5fe4dbc5b48bd21995a4"
-  ]
+    "name": "ScriptGenerator.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "Unity.2D.Animation.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [
+        ""
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.2d.animation",
+            "expression": "7",
+            "define": "U2D_ANIMATION"
+        }
+    ],
+    "noEngineReferences": false
 }
