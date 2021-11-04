@@ -79,11 +79,6 @@ namespace ScriptGenerator.Editor.Internal
             return typeDeclaration;
         }
 
-        public ITypeMembers AddNestedType(Action<ITypeDeclaration> build)
-        {
-            return AddNestedType(build, out _);
-        }
-
         public ITypeMembers AddNestedType(Action<ITypeDeclaration> build,
             out CodeTypeReference typeReference)
         {
@@ -104,31 +99,12 @@ namespace ScriptGenerator.Editor.Internal
             return this;
         }
 
-        public ITypeMembers Constructor<T>(out T arg, Action<ITypeConstructor> build)
-        {
-            arg = default;
-            return Constructor(build);
-        }
-
         public ITypeMembers Fields(Action<ITypeFields> build)
         {
             var builder = new TypeFieldsBuilder(this);
             build?.Invoke(builder);
             typeDeclaration.Members.AddRange(builder.Result());
             return this;
-        }
-
-        public ITypeMembers Fields<T>(out T arg, Action<ITypeFields> build)
-        {
-            arg = default;
-            return Fields(build);
-        }
-
-        public ITypeMembers Fields<T1, T2>(out T1 arg1, out T2 arg2, Action<ITypeFields> build)
-        {
-            arg1 = default;
-            arg2 = default;
-            return Fields(build);
         }
 
         public ITypeMembers Properties(Action<ITypeProperties> build)
