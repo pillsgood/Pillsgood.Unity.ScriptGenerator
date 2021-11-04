@@ -79,6 +79,11 @@ namespace ScriptGenerator.Editor.Internal
             return typeDeclaration;
         }
 
+        public CodeTypeReference Reference()
+        {
+            return new CodeTypeReference(typeDeclaration.Name);
+        }
+
         public ITypeMembers AddNestedType(Action<ITypeDeclaration> build,
             out CodeTypeReference typeReference)
         {

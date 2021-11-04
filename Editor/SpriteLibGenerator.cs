@@ -1,6 +1,8 @@
 ﻿#if U2D_ANIMATION
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using ScriptGenerator.Editor.Internal;
 using ScriptGenerator.Editor.Internal.FieldsBuilderExt;
@@ -26,6 +28,11 @@ namespace ScriptGenerator.Editor
 
         protected override bool GenerateCode()
         {
+            TargetUnit.WithNamespace()
+                .AddImport(new CodeNamespaceImport(typeof(Sprite).Namespace))
+                .AddImport(new CodeNamespaceImport(typeof(SpriteLibraryAsset).Namespace))
+                .AddImport(new CodeNamespaceImport(typeof(SpriteLibCategory).Namespace));
+
             TargetUnit.WithNamespace(Namespace)
                 .AddType(BuildTargetClass);
 
@@ -34,22 +41,12 @@ namespace ScriptGenerator.Editor
 
         private void BuildTargetClass(ITypeDeclaration builder)
         {
-            var members = builder.Name($"{TypeName}")
+            builder.Name($"{TypeName}")
                 .IsClass()
                 .IsPartial()
                 .TypeAttributes(TypeAttributes.Public)
-                .Members();
-
-            _categoryTypes = new Dictionary<string, CodeTypeReference>();
-
-            foreach (var categoryName in SourceObject.GetCategoryNames())
-            {
-                members.AddNestedType(declaration => BuildCategoryType(declaration, categoryName),
-                    out var categoryTypeReference);
-                _categoryTypes[categoryName] = categoryTypeReference;
-            }
-
-            members
+                .Members()
+                .AddNestedTypes(BuildCategoryTypes)
                 .AddNestedType(BuildSpriteLibCategories, out var categoriesTypeReference)
                 .Constructor(out CodeArgumentReferenceExpression spriteLibParamRef,
                     constructor =>
@@ -66,71 +63,70 @@ namespace ScriptGenerator.Editor
                 });
         }
 
-
-        private void BuildCategoryType(ITypeDeclaration builder, string categoryName)
+        private IEnumerable<Action<ITypeDeclaration>> BuildCategoryTypes()
         {
-            builder.Name($"{GetPropertyName(categoryName)}_Category")
-                .IsClass()
-                .Inherits(typeof(SpriteLibCategory))
-                .Members()
-                .AddNestedType(declaration =>
-                {
-                    declaration.Name("Label")
-                        .TypeAttributes(TypeAttributes.Public)
-                        .IsEnum()
-                        .Members()
-                        .EnumFields(fields =>
-                        {
-                            foreach (var labelName in SourceObject.GetCategoryLabelNames(categoryName))
+            _categoryTypes = new Dictionary<string, CodeTypeReference>();
+            return SourceObject.GetCategoryNames().Select(categoryName => (Action<ITypeDeclaration>) (builder =>
+            {
+                _categoryTypes[categoryName] = builder.Name($"{GetPropertyName(categoryName)}_Category")
+                    .IsClass()
+                    .Inherits(typeof(SpriteLibCategory))
+                    .Members()
+                    .AddNestedType(enumDeclaration =>
+                    {
+                        enumDeclaration.Name("Label")
+                            .TypeAttributes(TypeAttributes.Public)
+                            .IsEnum()
+                            .Members()
+                            .EnumFields(fields =>
                             {
-                                fields.Add(GetEnumFieldName(labelName));
-                            }
-                        })
-                        .Result();
-                }, out var enumTypeRef)
-                .Constructor(constructor =>
-                {
-                    constructor.Public()
-                        .AddParameter(typeof(string), "categoryName", out var nameParamRef)
-                        .AddParameter(typeof(SpriteLibraryAsset), "libraryAsset", out var spriteLibParamRef)
-                        .AddBaseParameter(nameParamRef)
-                        .AddBaseParameter(spriteLibParamRef);
-                })
-                .Methods(methods =>
-                {
-                    methods.Public("Get")
-                        .Return(typeof(Sprite))
-                        .AddParameter(enumTypeRef, "label", out var paramRef)
-                        .Statement(statements =>
-                        {
-                            var index = new CodeCastExpression(typeof(int), paramRef);
-                            var indexer = new CodeIndexerExpression(new CodeThisReferenceExpression(), index);
-                            statements.Add(new CodeMethodReturnStatement(indexer));
-                        });
-                });
+                                foreach (var labelName in SourceObject.GetCategoryLabelNames(categoryName))
+                                {
+                                    fields.Add(GetEnumFieldName(labelName));
+                                }
+                            });
+                    }, out var enumTypeRef)
+                    .Constructor(constructor =>
+                    {
+                        constructor.Public()
+                            .AddParameter(typeof(string), "categoryName", out var nameParamRef)
+                            .AddParameter(typeof(SpriteLibraryAsset), "libraryAsset", out var spriteLibParamRef)
+                            .AddBaseParameter(nameParamRef)
+                            .AddBaseParameter(spriteLibParamRef);
+                    })
+                    .Methods(methods =>
+                    {
+                        methods.Public("Get")
+                            .Return(typeof(Sprite))
+                            .AddParameter(enumTypeRef, "label", out var paramRef)
+                            .Statement(statements =>
+                            {
+                                var index = new CodeCastExpression(typeof(int), paramRef);
+                                var indexer = new CodeIndexerExpression(new CodeThisReferenceExpression(), index);
+                                statements.Add(new CodeMethodReturnStatement(indexer));
+                            });
+                    })
+                    .Reference();
+            }));
         }
 
         private void BuildSpriteLibCategories(ITypeDeclaration builder)
         {
-            var spriteLibParam = new CodeParameterDeclarationExpression(
-                typeof(SpriteLibraryAsset), "libraryAsset");
-
-            var members = builder.Name("SpriteLibCategories")
+            builder.Name("SpriteLibCategories")
                 .IsClass()
                 .TypeAttributes(TypeAttributes.NestedPublic)
-                .Members();
-
-            members.Constructor(constructor =>
+                .Members()
+                .Constructor(out CodeArgumentReferenceExpression spriteLibArgRef, constructor =>
                 {
                     constructor.Public()
-                        .AddParameter(spriteLibParam);
+                        .AddParameter(typeof(SpriteLibraryAsset), "libraryAsset", out spriteLibArgRef);
                 })
                 .Fields(fields =>
                 {
                     foreach (var (categoryName, typeRef) in _categoryTypes)
                     {
-                        var create = new CodeObjectCreateExpression(typeRef, new CodePrimitiveExpression
-                            (categoryName), new CodeArgumentReferenceExpression(spriteLibParam.Name));
+                        var create = new CodeObjectCreateExpression(typeRef,
+                            new CodePrimitiveExpression(categoryName), spriteLibArgRef);
 
                         fields.PrivateReadonly(typeRef, GetPrivateFieldName(categoryName))
                             .Assign()
