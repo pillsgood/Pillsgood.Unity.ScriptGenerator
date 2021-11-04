@@ -2,7 +2,7 @@
 
 namespace ScriptGenerator.Editor.Internal
 {
-    internal interface ICodeTypeBuilder
+    internal interface ITypeBuilder
     {
         CodeTypeDeclaration Result();
     }

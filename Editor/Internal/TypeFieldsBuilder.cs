@@ -3,14 +3,14 @@ using UnityEngine;
 
 namespace ScriptGenerator.Editor.Internal
 {
-    internal class FieldsBuilder : ITypeFields
+    internal class TypeFieldsBuilder : ITypeFields
     {
-        private readonly CodeTypeBuilder _codeTypeBuilder;
+        private readonly TypeBuilder _typeBuilder;
         private readonly CodeTypeMemberCollection _fields = new();
 
-        public FieldsBuilder(CodeTypeBuilder codeTypeBuilder)
+        public TypeFieldsBuilder(TypeBuilder typeBuilder)
         {
-            _codeTypeBuilder = codeTypeBuilder;
+            _typeBuilder = typeBuilder;
         }
 
         public ITypeField PrivateReadOnly(CodeTypeReference type, string name,
@@ -18,7 +18,7 @@ namespace ScriptGenerator.Editor.Internal
         {
             var field = new CodeMemberField(type, name)
             {
-                Attributes = MemberAttributes.Private
+                Attributes = MemberAttributes.Private,
             }.MakeReadonly(out var readonlyField);
 
             _fields.Add(readonlyField);
@@ -30,7 +30,7 @@ namespace ScriptGenerator.Editor.Internal
         {
             var field = new CodeMemberField(type, name)
             {
-                Attributes = MemberAttributes.Private
+                Attributes = MemberAttributes.Private,
             };
 
             _fields.Add(field);
@@ -42,7 +42,7 @@ namespace ScriptGenerator.Editor.Internal
         {
             var field = new CodeMemberField(type, name)
             {
-                Attributes = MemberAttributes.Family
+                Attributes = MemberAttributes.Family,
             };
 
             _fields.Add(field);
@@ -54,7 +54,7 @@ namespace ScriptGenerator.Editor.Internal
         {
             var field = new CodeMemberField(type, name)
             {
-                Attributes = MemberAttributes.Public
+                Attributes = MemberAttributes.Public,
             };
 
             _fields.Add(field);
@@ -67,7 +67,7 @@ namespace ScriptGenerator.Editor.Internal
         {
             var field = new CodeMemberField(type, name)
             {
-                Attributes = MemberAttributes.Public | MemberAttributes.Const
+                Attributes = MemberAttributes.Public | MemberAttributes.Const,
             };
             _fields.Add(field);
             return new FieldBuilder(this, field, out fieldReference);
@@ -83,9 +83,9 @@ namespace ScriptGenerator.Editor.Internal
         {
             private readonly CodeMemberField _field;
             private readonly CodeFieldReferenceExpression _fieldReference;
-            private readonly FieldsBuilder _parent;
+            private readonly TypeFieldsBuilder _parent;
 
-            public FieldBuilder(FieldsBuilder parent, CodeMemberField field,
+            public FieldBuilder(TypeFieldsBuilder parent, CodeMemberField field,
                 out CodeFieldReferenceExpression fieldReference)
             {
                 _parent = parent;
@@ -107,7 +107,7 @@ namespace ScriptGenerator.Editor.Internal
                     Type = _field.Type,
                     Name = name,
                     HasGet = true,
-                    HasSet = false
+                    HasSet = false,
                 };
                 property.GetStatements.Add(new CodeMethodReturnStatement(_fieldReference));
                 _parent._fields.Add(property);
@@ -117,9 +117,9 @@ namespace ScriptGenerator.Editor.Internal
             public ITypeField InConstructor(CodeExpression assignment)
             {
                 var assign = new CodeAssignStatement(_fieldReference, assignment);
-                Debug.Assert(_parent._codeTypeBuilder.codeConstructor != null,
+                Debug.Assert(_parent._typeBuilder.codeConstructor != null,
                     "_codeTypeBuilder.codeConstructor != null");
-                _parent._codeTypeBuilder.codeConstructor.Statements.Add(assign);
+                _parent._typeBuilder.codeConstructor.Statements.Add(assign);
                 return this;
             }
 

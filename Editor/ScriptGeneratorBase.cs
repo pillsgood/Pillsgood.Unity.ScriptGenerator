@@ -43,7 +43,10 @@ namespace ScriptGenerator.Editor
 
         private void OnValidate()
         {
-            if (autoNamespace) codeNamespace = GetNamespace(Path.GetDirectoryName(assetPath));
+            if (autoNamespace)
+            {
+                codeNamespace = GetNamespace(Path.GetDirectoryName(assetPath));
+            }
         }
 
         public override void OnImportAsset(AssetImportContext ctx)
@@ -64,7 +67,7 @@ namespace ScriptGenerator.Editor
                     var provider = new CSharpCodeProvider();
                     var options = new CodeGeneratorOptions
                     {
-                        BracingStyle = "C"
+                        BracingStyle = "C",
                     };
 
                     var dir = Path.GetDirectoryName(assetPath);
@@ -108,7 +111,10 @@ namespace ScriptGenerator.Editor
             if (char.IsDigit(name[0]))
             {
                 if (name.Length == 1)
+                {
                     return $"entry_{name}";
+                }
+
                 return name[1..].Trim('_') + $"_{name[0]}";
             }
 
@@ -125,7 +131,10 @@ namespace ScriptGenerator.Editor
             while (guard < 20)
             {
                 guard += 1;
-                if (string.IsNullOrEmpty(current) || current.EndsWith("Scripts") || current.EndsWith("Assets")) break;
+                if (string.IsNullOrEmpty(current) || current.EndsWith("Scripts") || current.EndsWith("Assets"))
+                {
+                    break;
+                }
 
                 var asmDef = Directory.EnumerateFiles(current).SingleOrDefault(s => s.EndsWith(".asmdef"));
                 if (string.IsNullOrEmpty(asmDef))

@@ -5,64 +5,71 @@ using JetBrains.Annotations;
 
 namespace ScriptGenerator.Editor.Internal
 {
-    internal class CodeTypeBuilder : ICodeTypeDeclaration, ICodeTypeMembers
+    internal class TypeBuilder : ITypeDeclaration, ITypeMembers
     {
         internal readonly CodeTypeDeclaration typeDeclaration;
         [CanBeNull] private CodeTypeReference _baseType;
 
         [CanBeNull] internal CodeConstructor codeConstructor;
 
-        public CodeTypeBuilder()
+        public TypeBuilder()
         {
             typeDeclaration = new CodeTypeDeclaration();
         }
 
-        public ICodeTypeDeclaration Name(string name)
+        public ITypeDeclaration Name(string name)
         {
             typeDeclaration.Name = name;
             return this;
         }
 
-        public ICodeTypeDeclaration IsClass()
+        public ITypeDeclaration IsClass()
         {
             typeDeclaration.IsClass = true;
             return this;
         }
 
-        public ICodeTypeDeclaration TypeAttributes(TypeAttributes typeAttributes)
+        public ITypeDeclaration TypeAttributes(TypeAttributes typeAttributes)
         {
             typeDeclaration.TypeAttributes = typeAttributes;
             return this;
         }
 
-        public ICodeTypeDeclaration IsPartial()
+        public ITypeDeclaration IsPartial()
         {
             typeDeclaration.IsPartial = true;
             return this;
         }
 
-        public ICodeTypeDeclaration Inherits(CodeTypeReference type)
+        public ITypeDeclaration Inherits(CodeTypeReference type)
         {
-            if (_baseType != null) typeDeclaration.BaseTypes.Remove(_baseType);
+            if (_baseType != null)
+            {
+                typeDeclaration.BaseTypes.Remove(_baseType);
+            }
+
             _baseType = type;
             typeDeclaration.BaseTypes.Add(type);
             return this;
         }
 
-        public ICodeTypeDeclaration Implements(CodeTypeReference type)
+        public ITypeDeclaration Implements(CodeTypeReference type)
         {
-            if (!typeDeclaration.BaseTypes.Contains(type)) typeDeclaration.BaseTypes.Add(type);
+            if (!typeDeclaration.BaseTypes.Contains(type))
+            {
+                typeDeclaration.BaseTypes.Add(type);
+            }
 
             return this;
         }
 
-        public ICodeTypeDeclaration IsEnum()
+        public ITypeDeclaration IsEnum()
         {
             typeDeclaration.IsEnum = true;
             return this;
         }
 
-        public ICodeTypeMembers Members()
+        public ITypeMembers Members()
         {
             return this;
         }
@@ -72,15 +79,15 @@ namespace ScriptGenerator.Editor.Internal
             return typeDeclaration;
         }
 
-        public ICodeTypeMembers AddNestedType(Action<ICodeTypeDeclaration> build)
+        public ITypeMembers AddNestedType(Action<ITypeDeclaration> build)
         {
             return AddNestedType(build, out _);
         }
 
-        public ICodeTypeMembers AddNestedType(Action<ICodeTypeDeclaration> build,
+        public ITypeMembers AddNestedType(Action<ITypeDeclaration> build,
             out CodeTypeReference typeReference)
         {
-            var builder = new CodeTypeBuilder();
+            var builder = new TypeBuilder();
             build?.Invoke(builder);
             var nestedTypeDeclaration = builder.Result();
             typeDeclaration.Members.Add(nestedTypeDeclaration);
@@ -88,51 +95,51 @@ namespace ScriptGenerator.Editor.Internal
             return this;
         }
 
-        public ICodeTypeMembers Constructor(Action<ITypeConstructor> build)
+        public ITypeMembers Constructor(Action<ITypeConstructor> build)
         {
-            var builder = new ConstructorBuilder();
+            var builder = new TypeConstructorBuilder();
             build?.Invoke(builder);
             codeConstructor = builder.Result();
             typeDeclaration.Members.Add(codeConstructor!);
             return this;
         }
 
-        public ICodeTypeMembers Constructor<T>(out T arg, Action<ITypeConstructor> build)
+        public ITypeMembers Constructor<T>(out T arg, Action<ITypeConstructor> build)
         {
             arg = default;
             return Constructor(build);
         }
 
-        public ICodeTypeMembers Fields(Action<ITypeFields> build)
+        public ITypeMembers Fields(Action<ITypeFields> build)
         {
-            var builder = new FieldsBuilder(this);
+            var builder = new TypeFieldsBuilder(this);
             build?.Invoke(builder);
             typeDeclaration.Members.AddRange(builder.Result());
             return this;
         }
 
-        public ICodeTypeMembers Fields<T>(out T arg, Action<ITypeFields> build)
+        public ITypeMembers Fields<T>(out T arg, Action<ITypeFields> build)
         {
             arg = default;
             return Fields(build);
         }
 
-        public ICodeTypeMembers Fields<T1, T2>(out T1 arg1, out T2 arg2, Action<ITypeFields> build)
+        public ITypeMembers Fields<T1, T2>(out T1 arg1, out T2 arg2, Action<ITypeFields> build)
         {
             arg1 = default;
             arg2 = default;
             return Fields(build);
         }
 
-        public ICodeTypeMembers Properties(Action<ITypeProperties> build)
+        public ITypeMembers Properties(Action<ITypeProperties> build)
         {
-            var builder = new PropertiesBuilder(this);
+            var builder = new TypePropertiesBuilder(this);
             build?.Invoke(builder);
             typeDeclaration.Members.AddRange(builder.Result());
             return this;
         }
 
-        public ICodeTypeMembers EnumFields(Action<IEnumFields> build)
+        public ITypeMembers EnumFields(Action<IEnumFields> build)
         {
             var builder = new EnumFieldsBuilder(this);
             build?.Invoke(builder);
@@ -140,9 +147,9 @@ namespace ScriptGenerator.Editor.Internal
             return this;
         }
 
-        public ICodeTypeMembers Methods(Action<ITypeMethods> build)
+        public ITypeMembers Methods(Action<ITypeMethods> build)
         {
-            var builder = new MethodsBuilder(this);
+            var builder = new TypeMethodsBuilder(this);
             build?.Invoke(builder);
             typeDeclaration.Members.AddRange(builder.Result());
             return this;

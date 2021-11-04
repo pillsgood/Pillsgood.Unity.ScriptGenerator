@@ -17,7 +17,7 @@ namespace ScriptGenerator.Editor
     [ScriptedImporter(1, Extension)]
     public class AnimatorBindingGenerator : ScriptGeneratorBase<AnimatorController>
     {
-        private const string Extension = BaseExtension + "animator_controller";
+        private const string Extension = "animator_" + BaseExtension;
         private Dictionary<string, CodeFieldReferenceExpression> _paramRefs;
 
         [MenuItem("Assets/Create/Generators/Animator Bindings")]
@@ -55,7 +55,7 @@ namespace ScriptGenerator.Editor
             return true;
         }
 
-        private void BuildTargetBaseClass(ICodeTypeDeclaration builder)
+        private void BuildTargetBaseClass(ITypeDeclaration builder)
         {
             builder.Name($"{TypeName}_Bindings")
                 .IsClass()
@@ -65,7 +65,7 @@ namespace ScriptGenerator.Editor
                 .AddNestedType(BuildAnimationParameters)
                 .Constructor(out CodeArgumentReferenceExpression animatorParamRef, constructor =>
                 {
-                    constructor.Abstract().Protected()
+                    constructor.Protected()
                         .AddParameter(typeof(Animator), "animator", out animatorParamRef);
                 })
                 .Fields(out CodeFieldReferenceExpression animatorRef, fields =>
@@ -82,11 +82,13 @@ namespace ScriptGenerator.Editor
 
                     foreach (var parameter in SourceObject.parameters.Where(param =>
                         param.type is AnimatorControllerParameterType.Trigger))
+                    {
                         fields.PrivateReadonly(typeof(AnimationTrigger), $"{GetPrivateFieldName(parameter.name)}")
                             .Assign()
                             .InConstructor(new CodeObjectCreateExpression(typeof(AnimationTrigger),
                                 animatorRef, _paramRefs[parameter.name]))
                             .EncapsulateGetOnly(GetPropertyName(parameter.name), MemberAttributes.Public);
+                    }
                 })
                 .Properties(properties =>
                 {
@@ -101,7 +103,7 @@ namespace ScriptGenerator.Editor
                                 (typeof(int), nameof(Animator.GetInteger), nameof(Animator.SetInteger)),
                             AnimatorControllerParameterType.Bool =>
                                 (typeof(bool), nameof(Animator.GetBool), nameof(Animator.SetBool)),
-                            _ => throw new ArgumentOutOfRangeException()
+                            _ => throw new ArgumentOutOfRangeException(),
                         };
                         properties.Public(type, GetPropertyName(parameter.name))
                             .Virtual()
@@ -126,7 +128,7 @@ namespace ScriptGenerator.Editor
                 });
         }
 
-        private void BuildAnimationParameters(ICodeTypeDeclaration builder)
+        private void BuildAnimationParameters(ITypeDeclaration builder)
         {
             var codeTypeDeclaration = builder.Name("AnimationParameters")
                 .IsClass()
@@ -157,25 +159,22 @@ namespace ScriptGenerator.Editor
             }
         }
 
-        private void BuildAnimationLayers(ICodeTypeDeclaration builder)
+        private void BuildAnimationLayers(ITypeDeclaration builder)
         {
-            // constructor
-            var animatorArg = new CodeParameterDeclarationExpression(typeof(Animator), "animator");
-
             builder.Name("AnimLayers")
                 .IsClass()
                 .TypeAttributes(TypeAttributes.NestedPublic)
                 .Members()
-                .Constructor(constructor =>
+                .Constructor(out CodeArgumentReferenceExpression animatorArgRef, constructor =>
                 {
                     constructor.Public()
-                        .AddParameter(animatorArg);
+                        .AddParameter(typeof(Animator), "animator", out animatorArgRef);
                 })
                 .Fields(fields =>
                 {
                     fields.PrivateReadonly(typeof(Animator), "_animator", out var animatorRef)
                         .Assign()
-                        .InConstructor(new CodeArgumentReferenceExpression(animatorArg.Name));
+                        .InConstructor(animatorArgRef);
 
                     for (var index = 0; index < SourceObject.layers.Length; index++)
                     {

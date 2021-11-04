@@ -3,7 +3,7 @@ using System.CodeDom;
 
 namespace ScriptGenerator.Editor.Internal
 {
-    internal static class TypeConstructorExtension
+    internal static class TypeConstructorExtensions
     {
         public static ITypeConstructor AddParameter(this ITypeConstructor constructor,
             CodeParameterDeclarationExpression parameter)

@@ -3,29 +3,29 @@ using System.CodeDom;
 
 namespace ScriptGenerator.Editor.Internal
 {
-    internal class CodeNamespaceBuilder
+    internal class NamespaceBuilder
     {
         private readonly CodeNamespace _codeNamespace;
 
-        public CodeNamespaceBuilder(CodeNamespace codeNamespace)
+        public NamespaceBuilder(CodeNamespace codeNamespace)
         {
             _codeNamespace = codeNamespace;
         }
 
-        public CodeNamespaceBuilder AddImport(CodeNamespaceImport codeImport)
+        public NamespaceBuilder AddImport(CodeNamespaceImport codeImport)
         {
             _codeNamespace.Imports.Add(codeImport);
             return this;
         }
 
-        public CodeNamespaceBuilder AddType(Action<ICodeTypeDeclaration> build)
+        public NamespaceBuilder AddType(Action<ITypeDeclaration> build)
         {
             return AddType(build, out _);
         }
 
-        public CodeNamespaceBuilder AddType(Action<ICodeTypeDeclaration> build, out CodeTypeReference typeReference)
+        public NamespaceBuilder AddType(Action<ITypeDeclaration> build, out CodeTypeReference typeReference)
         {
-            var builder = new CodeTypeBuilder();
+            var builder = new TypeBuilder();
             build?.Invoke(builder);
             var typeDeclaration = builder.Result();
             _codeNamespace.Types.Add(typeDeclaration);

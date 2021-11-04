@@ -2,14 +2,14 @@
 
 namespace ScriptGenerator.Editor.Internal
 {
-    internal class MethodsBuilder : ITypeMethods
+    internal class TypeMethodsBuilder : ITypeMethods
     {
-        private readonly CodeTypeBuilder _codeTypeBuilder;
+        private readonly TypeBuilder _typeBuilder;
         private readonly CodeTypeMemberCollection _methods = new();
 
-        public MethodsBuilder(CodeTypeBuilder codeTypeBuilder)
+        public TypeMethodsBuilder(TypeBuilder typeBuilder)
         {
-            _codeTypeBuilder = codeTypeBuilder;
+            _typeBuilder = typeBuilder;
         }
 
         public ITypeMethod Public(string name)
@@ -17,10 +17,10 @@ namespace ScriptGenerator.Editor.Internal
             var method = new CodeMemberMethod
             {
                 Name = name,
-                Attributes = MemberAttributes.Public | MemberAttributes.Final
+                Attributes = MemberAttributes.Public | MemberAttributes.Final,
             };
             _methods.Add(method);
-            return new TypeMethod(_codeTypeBuilder, method);
+            return new TypeMethod(_typeBuilder, method);
         }
 
         public CodeTypeMemberCollection Result()
@@ -30,12 +30,12 @@ namespace ScriptGenerator.Editor.Internal
 
         private class TypeMethod : ITypeMethod
         {
-            private readonly CodeTypeBuilder _codeTypeBuilder;
+            private readonly TypeBuilder _typeBuilder;
             private readonly CodeMemberMethod _method;
 
-            public TypeMethod(CodeTypeBuilder codeTypeBuilder, CodeMemberMethod method)
+            public TypeMethod(TypeBuilder typeBuilder, CodeMemberMethod method)
             {
-                _codeTypeBuilder = codeTypeBuilder;
+                _typeBuilder = typeBuilder;
                 _method = method;
             }
 

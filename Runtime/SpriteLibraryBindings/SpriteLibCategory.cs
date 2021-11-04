@@ -26,7 +26,10 @@ namespace ScriptGenerator.Runtime.SpriteLibraryBindings
 
         public IEnumerator<Sprite> GetEnumerator()
         {
-            for (var i = 0; i < Count; i++) yield return this[i];
+            for (var i = 0; i < Count; i++)
+            {
+                yield return this[i];
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()

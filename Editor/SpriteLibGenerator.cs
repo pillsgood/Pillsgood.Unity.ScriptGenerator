@@ -15,7 +15,7 @@ namespace ScriptGenerator.Editor
     [ScriptedImporter(1, Extension)]
     public class SpriteLibGenerator : ScriptGeneratorBase<SpriteLibraryAsset>
     {
-        private const string Extension = BaseExtension + "sprite_lib";
+        private const string Extension = "spritelib_" + BaseExtension;
         private Dictionary<string, CodeTypeReference> _categoryTypes;
 
         [MenuItem("Assets/Create/Generators/Sprite Library Bindings")]
@@ -32,7 +32,7 @@ namespace ScriptGenerator.Editor
             return true;
         }
 
-        private void BuildTargetClass(ICodeTypeDeclaration builder)
+        private void BuildTargetClass(ITypeDeclaration builder)
         {
             var members = builder.Name($"{TypeName}")
                 .IsClass()
@@ -43,7 +43,11 @@ namespace ScriptGenerator.Editor
             _categoryTypes = new Dictionary<string, CodeTypeReference>();
 
             foreach (var categoryName in SourceObject.GetCategoryNames())
-                members.AddNestedType(declaration => BuildCategoryType(declaration, categoryName));
+            {
+                members.AddNestedType(declaration => BuildCategoryType(declaration, categoryName),
+                    out var categoryTypeReference);
+                _categoryTypes[categoryName] = categoryTypeReference;
+            }
 
             members
                 .AddNestedType(BuildSpriteLibCategories, out var categoriesTypeReference)
@@ -63,9 +67,9 @@ namespace ScriptGenerator.Editor
         }
 
 
-        private void BuildCategoryType(ICodeTypeDeclaration builder, string categoryName)
+        private void BuildCategoryType(ITypeDeclaration builder, string categoryName)
         {
-            var categoryDeclaration = builder.Name($"{GetPropertyName(categoryName)}_Category")
+            builder.Name($"{GetPropertyName(categoryName)}_Category")
                 .IsClass()
                 .Inherits(typeof(SpriteLibCategory))
                 .Members()
@@ -78,7 +82,9 @@ namespace ScriptGenerator.Editor
                         .EnumFields(fields =>
                         {
                             foreach (var labelName in SourceObject.GetCategoryLabelNames(categoryName))
+                            {
                                 fields.Add(GetEnumFieldName(labelName));
+                            }
                         })
                         .Result();
                 }, out var enumTypeRef)
@@ -101,13 +107,10 @@ namespace ScriptGenerator.Editor
                             var indexer = new CodeIndexerExpression(new CodeThisReferenceExpression(), index);
                             statements.Add(new CodeMethodReturnStatement(indexer));
                         });
-                })
-                .Result();
-
-            _categoryTypes[categoryName] = new CodeTypeReference(categoryDeclaration.Name);
+                });
         }
 
-        private void BuildSpriteLibCategories(ICodeTypeDeclaration builder)
+        private void BuildSpriteLibCategories(ITypeDeclaration builder)
         {
             var spriteLibParam = new CodeParameterDeclarationExpression(
                 typeof(SpriteLibraryAsset), "libraryAsset");

@@ -4,17 +4,17 @@ namespace ScriptGenerator.Editor.Internal
 {
     internal class EnumFieldsBuilder : IEnumFields
     {
-        private readonly CodeTypeBuilder _codeTypeBuilder;
+        private readonly TypeBuilder _typeBuilder;
         private readonly CodeTypeMemberCollection _fields = new();
 
-        public EnumFieldsBuilder(CodeTypeBuilder codeTypeBuilder)
+        public EnumFieldsBuilder(TypeBuilder typeBuilder)
         {
-            _codeTypeBuilder = codeTypeBuilder;
+            _typeBuilder = typeBuilder;
         }
 
         public IEnumFields Add(string name)
         {
-            var field = new CodeMemberField(_codeTypeBuilder.typeDeclaration.Name, name);
+            var field = new CodeMemberField(_typeBuilder.typeDeclaration.Name, name);
             _fields.Add(field);
             return this;
         }

@@ -3,7 +3,7 @@ using System.CodeDom;
 
 namespace ScriptGenerator.Editor.Internal.FieldsBuilderExt
 {
-    internal static class FieldsBuilderProtectedExtension
+    internal static class FieldsBuilderProtectedExtensions
     {
         public static ITypeField Protected(this ITypeFields source, Type type, string name)
         {

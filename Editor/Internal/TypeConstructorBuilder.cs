@@ -2,15 +2,15 @@
 
 namespace ScriptGenerator.Editor.Internal
 {
-    internal class ConstructorBuilder : ITypeConstructor
+    internal class TypeConstructorBuilder : ITypeConstructor
     {
         private readonly CodeConstructor _codeConstructor;
 
-        public ConstructorBuilder()
+        public TypeConstructorBuilder()
         {
             _codeConstructor = new CodeConstructor
             {
-                Attributes = MemberAttributes.Public
+                Attributes = MemberAttributes.Public,
             };
         }
 

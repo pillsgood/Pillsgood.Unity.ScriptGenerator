@@ -3,7 +3,7 @@ using System.CodeDom;
 
 namespace ScriptGenerator.Editor.Internal.PropertiesBuilderExt
 {
-    internal static class PropertiesBuilderProtectedExtension
+    internal static class PropertiesBuilderProtectedExtensions
     {
         public static ITypeProperty Protected(this ITypeProperties source, Type type, string name)
         {

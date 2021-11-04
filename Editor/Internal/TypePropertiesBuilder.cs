@@ -2,12 +2,12 @@
 
 namespace ScriptGenerator.Editor.Internal
 {
-    internal class PropertiesBuilder : ITypeProperties
+    internal class TypePropertiesBuilder : ITypeProperties
     {
         private readonly CodeTypeMemberCollection _properties = new();
-        private readonly CodeTypeBuilder _typeBuilder;
+        private readonly TypeBuilder _typeBuilder;
 
-        public PropertiesBuilder(CodeTypeBuilder typeBuilder)
+        public TypePropertiesBuilder(TypeBuilder typeBuilder)
         {
             _typeBuilder = typeBuilder;
         }
@@ -19,7 +19,7 @@ namespace ScriptGenerator.Editor.Internal
             {
                 Type = type,
                 Name = name,
-                Attributes = MemberAttributes.Public | MemberAttributes.Final
+                Attributes = MemberAttributes.Public | MemberAttributes.Final,
             };
             _properties.Add(property);
             return new PropertyBuilder(this, property, out propertyReference);
@@ -32,7 +32,7 @@ namespace ScriptGenerator.Editor.Internal
             {
                 Type = type,
                 Name = name,
-                Attributes = MemberAttributes.Family | MemberAttributes.Final
+                Attributes = MemberAttributes.Family | MemberAttributes.Final,
             };
             _properties.Add(property);
             return new PropertyBuilder(this, property, out propertyReference);
@@ -45,7 +45,7 @@ namespace ScriptGenerator.Editor.Internal
             {
                 Type = type,
                 Name = name,
-                Attributes = MemberAttributes.Private | MemberAttributes.Final
+                Attributes = MemberAttributes.Private | MemberAttributes.Final,
             };
             _properties.Add(property);
             return new PropertyBuilder(this, property, out propertyReference);
@@ -58,11 +58,11 @@ namespace ScriptGenerator.Editor.Internal
 
         public class PropertyBuilder : ITypeProperty
         {
-            private readonly PropertiesBuilder _parent;
+            private readonly TypePropertiesBuilder _parent;
             private readonly CodeMemberProperty _property;
             private readonly CodePropertyReferenceExpression _propertyReference;
 
-            public PropertyBuilder(PropertiesBuilder parent, CodeMemberProperty property,
+            public PropertyBuilder(TypePropertiesBuilder parent, CodeMemberProperty property,
                 out CodePropertyReferenceExpression propertyReference)
             {
                 _parent = parent;

@@ -1,25 +1,25 @@
 {
-    "name": "ScriptGenerator.Editor",
-    "rootNamespace": "",
-    "references": [
-        "ScriptGenerator.Runtime",
-        "Unity.2D.Animation.Runtime"
-    ],
-    "includePlatforms": [
-        "Editor"
-    ],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [
-        {
-            "name": "com.unity.2d.animation",
-            "expression": "7",
-            "define": "U2D_ANIMATION"
-        }
-    ],
-    "noEngineReferences": false
+  "name": "ScriptGenerator.Editor",
+  "rootNamespace": "",
+  "references": [
+    "ScriptGenerator.Runtime",
+    "Unity.2D.Animation.Runtime"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [
+    {
+      "name": "com.unity.2d.animation",
+      "expression": "7",
+      "define": "U2D_ANIMATION"
+    }
+  ],
+  "noEngineReferences": false
 }
