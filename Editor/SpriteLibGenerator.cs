@@ -28,11 +28,6 @@ namespace ScriptGenerator.Editor
 
         protected override bool GenerateCode()
         {
-            TargetUnit.WithNamespace()
-                .AddImport(new CodeNamespaceImport(typeof(Sprite).Namespace))
-                .AddImport(new CodeNamespaceImport(typeof(SpriteLibraryAsset).Namespace))
-                .AddImport(new CodeNamespaceImport(typeof(SpriteLibCategory).Namespace));
-
             TargetUnit.WithNamespace(Namespace)
                 .AddType(BuildTargetClass);
 

@@ -28,10 +28,6 @@ namespace ScriptGenerator.Editor
 
         protected override bool GenerateCode()
         {
-            TargetUnit.WithNamespace()
-                .AddImport(new CodeNamespaceImport(nameof(System)))
-                .AddImport(new CodeNamespaceImport(nameof(UnityEngine)));
-
             TargetUnit.WithNamespace(Namespace)
                 .AddType(BuildTargetBaseClass, out var baseTypeReference)
                 .AddType(declaration =>
